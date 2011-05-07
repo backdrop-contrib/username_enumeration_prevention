@@ -1,1 +1,7 @@
+; $id$
+
 name = Username Enumeration Prevention
+description = "Removes the error message from the forgot password form."
+core = 7.x
+files[] = username_enumeration_prevention.module
+version = "7.0"
