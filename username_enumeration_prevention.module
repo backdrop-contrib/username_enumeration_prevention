@@ -1,26 +1,28 @@
 <?php
-// $Id$
 
 /**
  * @file
  * Main file for the Username Enumeration Prevention.
- * Adds the required functionality for setting a field limit.
+ * Adds the required functionality for removing the reset password error message.
  */
 
 /**
  * Implements hook_form_alter().
+ * Checks for the user password reset form and changes the validate and submit functions.
+ * Uses the overrided functions defined in this module instead of Drupal cores.
  */
 
 function username_enumeration_prevention_form_alter(&$form, &$form_state, $form_id) {
   // check to see if form is the reset password form	
   if (strlen(strstr($form_id, 'user_pass')) > 0) {
+    // change validate and submit actions. Use functions defined in this module rather than core.
     $form['#validate'][0] = 'username_enumeration_prevention_pass_validate';
     $form['#submit'][0] = 'username_enumeration_prevention_pass_submit';
   }
 }
 
 /**
- * Handles password reset form validation
+ * Overrides the Drupal Core user_pass_validate() function found in user.pages.inc
  */
 
 function username_enumeration_prevention_pass_validate($form, &$form_state) {
@@ -43,6 +45,10 @@ function username_enumeration_prevention_pass_validate($form, &$form_state) {
     }
   }
 }
+
+/**
+ * Overrides the Drupal Core user_pass_submit() function found in user.pages.inc
+ */
 
 function username_enumeration_prevention_pass_submit($form, &$form_state) {
   global $language;
