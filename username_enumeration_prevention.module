@@ -10,15 +10,29 @@
  */
 
 /**
- * Implements hook_form_alter().
- *
- * Check to see if any callbacks are enabled for anonymous users and warn user.
+ * Implements hook_requirements().
  */
-function username_enumeration_prevention_enable() {
-  $roles = user_roles(FALSE, 'access user profiles');
-  if (isset($roles[1]) && $roles[1] == 'anonymous user') {
-    drupal_set_message(t('WARNING! You have anonymous users set up with the permission to access user profiles. This is a security risk because it allows users that are not logged into the system to obtain usernames using callbacks. You can read more about this in the module README or at the project page.'), 'warning');
+function username_enumeration_prevention_requirements() {
+  $requirements = array();
+  $username_enumeration_prevention_roles = user_roles(FALSE, 'access user profiles');
+  if (isset($username_enumeration_prevention_roles[1]) && $username_enumeration_prevention_roles[1] == "anonymous user") {
+    $value = t('WARNING! Anonymous users have permission to access user profiles.');
+    $severity = REQUIREMENT_WARNING;
   }
+  else {
+    $value = t('Anonymous users do not have permission to access user profiles.');
+  }
+
+  $requirements['username_enumeration_prevention_via_permissions'] = array(
+    'title' => t('Username enumeration prevention'),
+    'value' => $value,
+    'description' => t('Granting anonymous users permission to access user profiles poses a security risk because it
+    allows users who are not logged into the site to obtain usernames via callbacks. More information is available in the
+    module README or on the !url.', array('!url' => l(t('project page'), 'http://drupal.org/project/username_enumeration_prevention'))),
+    'severity' => $severity,
+  );
+
+  return $requirements;
 }
 
 /**
