@@ -16,7 +16,9 @@
  * profiles permission.
  */
 function username_enumeration_prevention_menu_alter(&$items) {
-  $items['admin/views/ajax/autocomplete/user']['access arguments'] = array('access user profiles');
+  if (module_exists('views')) {
+    $items['admin/views/ajax/autocomplete/user']['access arguments'] = array('access user profiles');
+  }
 }
 
 /**
