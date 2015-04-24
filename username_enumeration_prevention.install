@@ -36,5 +36,27 @@ function username_enumeration_prevention_requirements($phase) {
     'severity' => isset($severity) ? $severity : REQUIREMENT_OK,
   );
 
+  if (module_exists('pathauto') && module_exists('globalredirect')) {
+    $globalredirect_settings = _globalredirect_get_settings();
+    if (strstr(variable_get('pathauto_user_pattern', 'users/[user:name]'), '[user:name]') && !$globalredirect_settings['menu_check']) {
+      $value = t('WARNING! Current Pathauto and Global Redirect settings may
+        expose usernames.');
+      $severity = REQUIREMENT_WARNING;
+    } else {
+      $value = t('Pathauto and Global Redirect settings have been changed from
+        the defaults that can expose username.');
+    }
+    $requirements['username_enumeration_prevention_via_redirects'] = array(
+      'title' => t('Username enumeration prevention'),
+      'value' => $value,
+      'description' => t("Pathauto's default user paths, along with Global
+      Redirect's default Menu Access Checking disabled combine to create
+      redirects with no access checking. More information is available in the
+      !url.", array('!url' => l(t('Global Redirect issue queue'),
+        'http://drupal.org/node/782476'))),
+      'severity' => isset($severity) ? $severity : REQUIREMENT_OK,
+    );
+  }
+
   return $requirements;
 }
