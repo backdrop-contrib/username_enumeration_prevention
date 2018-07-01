@@ -26,6 +26,7 @@ function username_enumeration_prevention_requirements($phase) {
     else {
       $value = $t('Anonymous users do not have permission to access user
         profiles.');
+      $severity = REQUIREMENT_OK;
     }
 
     $requirements['username_enumeration_prevention_via_permissions'] = array(
