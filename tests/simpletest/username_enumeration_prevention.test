@@ -1,0 +1,107 @@
+<?php
+
+/**
+ * @file
+ * Test case for enumerating password reset form.
+ */
+
+/**
+ * The UsernameEnumerationPreventionTestCase tests functionality of this module.
+ */
+class UsernameEnumerationPreventionTestCase extends DrupalWebTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    return [
+      'name' => 'Username Enumeration Prevention',
+      'description' => 'Ensure that the enumerating the password reset form is not possible.',
+      'group' => 'Username Enumeration Prevention',
+    ];
+  }
+
+  /**
+   * Creates some users and a list of fake users.
+   */
+  public function setUp() {
+    parent::setUp('username_enumeration_prevention');
+  }
+
+  /**
+   * Submit the password reset form and check for resulting messaging.
+   */
+  public function testPasswordResetEnum() {
+    // Add some fake users.
+    $users = ['foo', 'bar', 'baz'];
+
+    // Create some real users.
+    for ($i = 0; $i < 5; $i++) {
+      $user = $this->drupalCreateUser();
+      $users[] = $user->name;
+    }
+
+    foreach ($users as $username) {
+      // Submit the password reset form.
+      $edit = ['name' => $username];
+      $this->drupalPost('user/password', $edit, t('E-mail new password'));
+
+      // Confirm the message returns the same text for all cases.
+      $this->assertText(
+        t('Further instructions have been sent to your e-mail address.'),
+        t('Password reset instructions mailed message displayed for %name.', [
+          '%name' => $username,
+        ]
+      ));
+      $this->assertNoText(
+        t('Sorry, %name is not recognized as a user name or an e-mail address.', ['%name' => $username]),
+        'Unrecognized username message not displayed.'
+      );
+    }
+  }
+
+  /**
+   * Ensure the password reset form sends an email for valid users.
+   */
+  public function testPasswordResetActive() {
+    // Create a user.
+    $user = $this->drupalCreateUser();
+
+    // Submit the password reset form.
+    $edit = ['name' => $user->name];
+    $this->drupalPost('user/password', $edit, t('E-mail new password'));
+
+    // Ensure email did not get sent.
+    $mail = $this->getResetMail();
+    $this->assertFalse(empty($mail), 'Active user received password reset email.');
+  }
+
+  /**
+   * Ensure the password reset form does not actually work for blocked users.
+   */
+  public function testPasswordResetBlocked() {
+    // Create a user and block it.
+    $user = $this->drupalCreateUser();
+    $user->status = 0;
+    user_save($user);
+
+    // Submit the password reset form.
+    $edit = ['name' => $user->name];
+    $this->drupalPost('user/password', $edit, t('E-mail new password'));
+
+    // Ensure email did not get sent.
+    $mail = $this->getResetMail();
+    $this->assertTrue(empty($mail), 'Blocked user did not get password reset email.');
+  }
+
+  /**
+   * Retrieves password reset email.
+   */
+  public function getResetMail() {
+    // Assume the most recent email.
+    $_emails = $this->drupalGetMails();
+    $email = end($_emails);
+    return $email;
+  }
+
+}
