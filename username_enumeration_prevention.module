@@ -22,24 +22,21 @@ function username_enumeration_prevention_menu_alter(&$items) {
 }
 
 /**
- * Implements hook_form_alter().
+ * Implements hook_form_FORM_ID_alter().
  *
  * Checks for the user password reset form and changes the validate and submit
  * functions. Uses the overrided functions defined in this module instead of
  * Drupal cores.
  */
-function username_enumeration_prevention_form_alter(&$form, &$form_state, $form_id) {
-  // Check to see if form is the reset password form.
-  if (strlen(strstr($form_id, 'user_pass')) > 0) {
-    // Override core validate and submit actions.
-    $key_validate = array_search('user_pass_validate', $form['#validate']);
-    if ($key_validate !== FALSE) {
-      $form['#validate'][$key_validate] = 'username_enumeration_prevention_pass_validate';
-    }
-    $key_submit = array_search('user_pass_submit', $form['#submit']);
-    if ($key_submit !== FALSE) {
-      $form['#submit'][$key_submit] = 'username_enumeration_prevention_pass_submit';
-    }
+function username_enumeration_prevention_form_user_pass_alter(&$form, &$form_state, $form_id) {
+  // Override core validate and submit actions.
+  $key_validate = array_search('user_pass_validate', $form['#validate']);
+  if ($key_validate !== FALSE) {
+    $form['#validate'][$key_validate] = 'username_enumeration_prevention_pass_validate';
+  }
+  $key_submit = array_search('user_pass_submit', $form['#submit']);
+  if ($key_submit !== FALSE) {
+    $form['#submit'][$key_submit] = 'username_enumeration_prevention_pass_submit';
   }
 }
 
