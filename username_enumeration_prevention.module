@@ -60,12 +60,6 @@ function username_enumeration_prevention_pass_validate($form, &$form_state) {
   if (isset($account->uid)) {
     form_set_value(array('#parents' => array('account')), $account, $form_state);
   }
-  else {
-    // Reuse the 'send email' message if a value was entered in form.
-    if ($name != '') {
-      drupal_set_message(t('Further instructions have been sent to your e-mail address.'));
-    }
-  }
 }
 
 /**
@@ -79,7 +73,11 @@ function username_enumeration_prevention_pass_submit($form, &$form_state) {
     // Mail one time login URL and instructions using current language.
     _user_mail_notify('password_reset', $account, $language);
     watchdog('user', 'Password reset instructions mailed to %name at %email.', array('%name' => $account->name, '%email' => $account->mail));
-    drupal_set_message(t('Further instructions have been sent to your e-mail address.'));
   }
+  // Set the same message as when an email has been sent whenever the form is
+  // submitted. Moved from validation callback to prevent message to be
+  // displayed in case there is another form error for other modules like
+  // captcha.
+  drupal_set_message(t('Further instructions have been sent to your e-mail address.'));
   $form_state['redirect'] = 'user';
 }
