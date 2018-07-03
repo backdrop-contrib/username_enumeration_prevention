@@ -7,7 +7,7 @@ jobs:
       - image: nicksantamaria/drupal_contrib_builder:latest
     working_directory: /data
     environment:
-      GIT_MIRROR_URL: |
+      GIT_MIRROR_URL: |-
         nickurbits@git.drupal.org:project/username_enumeration_prevention.git
     steps:
       - checkout
