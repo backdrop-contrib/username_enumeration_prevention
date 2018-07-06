@@ -104,4 +104,24 @@ class UsernameEnumerationPreventionTestCase extends DrupalWebTestCase {
     return $email;
   }
 
+  /**
+   * Submit the password reset form and check for resulting messaging.
+   */
+  public function testUserPageEnum() {
+    // Add some fake uids.
+    $uids = [13, 22, 1098];
+
+    // Create some real users.
+    for ($i = 0; $i < 5; $i++) {
+      $user = $this->drupalCreateUser();
+      $uids[] = $user->uid;
+    }
+
+    foreach ($uids as $uid) {
+      // Hit user/[uid] and ensure a 404.
+      $this->drupalGet(sprintf("user/%d", $uid));
+      $this->assertResponse(404, t('Page not found error returned when viewing user profile pages.'));
+    }
+  }
+
 }
