@@ -10,6 +10,23 @@
  */
 
 /**
+ * Implements hook_menu_alter().
+ */
+function username_enumeration_prevention_menu_alter(&$items) {
+  $items['user/%user']['delivery callback'] = 'username_enumeration_prevention_delivery_wrapper';
+}
+
+/**
+ * Converts 403 Access Denied responses to 404 Not Found on user profiles.
+ */
+function username_enumeration_prevention_delivery_wrapper($page_callback_result) {
+  if ($page_callback_result == MENU_ACCESS_DENIED) {
+    $page_callback_result = MENU_NOT_FOUND;
+  }
+  drupal_deliver_html_page($page_callback_result);
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  *
  * Checks for the user password reset form and changes the validate and submit
