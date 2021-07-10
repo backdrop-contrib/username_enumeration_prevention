@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Main file for the Username Enumeration Prevention.
@@ -23,7 +22,7 @@ function username_enumeration_prevention_delivery_wrapper($page_callback_result)
   if ($page_callback_result == MENU_ACCESS_DENIED) {
     $page_callback_result = MENU_NOT_FOUND;
   }
-  drupal_deliver_html_page($page_callback_result);
+  backdrop_deliver_html_page($page_callback_result);
 }
 
 /**
@@ -80,6 +79,6 @@ function username_enumeration_prevention_pass_submit($form, &$form_state) {
   // submitted. Moved from validation callback to prevent message to be
   // displayed in case there is another form error for other modules like
   // captcha.
-  drupal_set_message(t('Further instructions have been sent to your e-mail address.'));
+  backdrop_set_message(t('Further instructions have been sent to your e-mail address.'));
   $form_state['redirect'] = 'user';
 }

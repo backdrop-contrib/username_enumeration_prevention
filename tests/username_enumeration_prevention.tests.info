@@ -1,0 +1,5 @@
+[UsernameEnumerationPreventionTestCase]
+name = Username Enumeration Prevention
+description = Ensure that the enumerating the password reset form is not possible.
+group = Username Enumeration Prevention
+file = username_enumeration_prevention.test

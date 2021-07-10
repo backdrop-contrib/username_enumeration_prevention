@@ -8,18 +8,8 @@
 /**
  * The UsernameEnumerationPreventionTestCase tests functionality of this module.
  */
-class UsernameEnumerationPreventionTestCase extends DrupalWebTestCase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Username Enumeration Prevention',
-      'description' => 'Ensure that the enumerating the password reset form is not possible.',
-      'group' => 'Username Enumeration Prevention',
-    ];
-  }
+class UsernameEnumerationPreventionTestCase extends BackdropWebTestCase {
+  public $profile = 'testing';
 
   /**
    * Creates some users and a list of fake users.
@@ -37,14 +27,14 @@ class UsernameEnumerationPreventionTestCase extends DrupalWebTestCase {
 
     // Create some real users.
     for ($i = 0; $i < 5; $i++) {
-      $user = $this->drupalCreateUser();
+      $user = $this->backdropCreateUser();
       $users[] = $user->name;
     }
 
     foreach ($users as $username) {
       // Submit the password reset form.
       $edit = ['name' => $username];
-      $this->drupalPost('user/password', $edit, t('E-mail new password'));
+      $this->backdropPost('user/password', $edit, t('Reset password'));
 
       // Confirm the message returns the same text for all cases.
       $this->assertText(
@@ -65,11 +55,11 @@ class UsernameEnumerationPreventionTestCase extends DrupalWebTestCase {
    */
   public function testPasswordResetActive() {
     // Create a user.
-    $user = $this->drupalCreateUser();
+    $user = $this->backdropCreateUser();
 
     // Submit the password reset form.
     $edit = ['name' => $user->name];
-    $this->drupalPost('user/password', $edit, t('E-mail new password'));
+    $this->backdropPost('user/password', $edit, t('Reset password'));
 
     // Ensure email did not get sent.
     $mail = $this->getResetMail();
@@ -81,13 +71,13 @@ class UsernameEnumerationPreventionTestCase extends DrupalWebTestCase {
    */
   public function testPasswordResetBlocked() {
     // Create a user and block it.
-    $user = $this->drupalCreateUser();
+    $user = $this->backdropCreateUser();
     $user->status = 0;
     user_save($user);
 
     // Submit the password reset form.
     $edit = ['name' => $user->name];
-    $this->drupalPost('user/password', $edit, t('E-mail new password'));
+    $this->backdropPost('user/password', $edit, t('Reset password'));
 
     // Ensure email did not get sent.
     $mail = $this->getResetMail();
@@ -99,7 +89,7 @@ class UsernameEnumerationPreventionTestCase extends DrupalWebTestCase {
    */
   public function getResetMail() {
     // Assume the most recent email.
-    $_emails = $this->drupalGetMails();
+    $_emails = $this->backdropGetMails();
     $email = end($_emails);
     return $email;
   }
@@ -113,13 +103,13 @@ class UsernameEnumerationPreventionTestCase extends DrupalWebTestCase {
 
     // Create some real users.
     for ($i = 0; $i < 5; $i++) {
-      $user = $this->drupalCreateUser();
+      $user = $this->backdropCreateUser();
       $uids[] = $user->uid;
     }
 
     foreach ($uids as $uid) {
       // Hit user/[uid] and ensure a 404.
-      $this->drupalGet(sprintf("user/%d", $uid));
+      $this->backdropGet(sprintf("user/%d", $uid));
       $this->assertResponse(404, t('Page not found error returned when viewing user profile pages.'));
     }
   }
