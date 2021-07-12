@@ -26,7 +26,7 @@ will be redirected back to the login form. If the user does not exist, no
 password reset email will be sent, but the attacker will not know this is the
 case.
 
-WARNING: By telling people that an email has been sent even when it has not, it
+**Warning:** By telling people that an email has been sent even when it has not, it
 can create a very frustrating experience for those legitimately attempting to
 recover a lost password.
 
