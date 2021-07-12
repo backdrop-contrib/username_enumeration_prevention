@@ -2,16 +2,15 @@
 Username Enumeration Prevention
 ===============================
 
-By default Drupal is very secure (especially Drupal 7+). However, there is a
-way to exploit the system by using a technique called username enumeration.
-Drupal 6, 7, and 8 have this issue, though it is much worse for people using
-Drupal 6.  This is because Drupal 6 does not have any built in brute force
-prevention.  When an attacker knows a username, they can start a brute force
-attack to gain access with that user. To help prevent this, it is best if
-usernames on the system are not easy to find out.
+Username enumeration is when a malicious actor can use brute-force techniques to
+either guess or confirm valid user accounts in a system. When an attacker knows
+a username, they can start a brute-force attack to gain access with that user.
 
-This module provides several additional protections to prevent username
-enumeration.
+In Backdrop, it may be possible to derive a username by visiting user profile
+pages, or by using the password reset form (see below for details on each).
+
+This module provides several protections to prevent username enumeration by
+making usernames on the system harder to discover.
 
 ### Request New Password Validation
 
@@ -27,14 +26,19 @@ will be redirected back to the login form. If the user does not exist, no
 password reset email will be sent, but the attacker will not know this is the
 case.
 
+WARNING: By telling people that an email has been sent even when it has not, it
+can create a very frustrating experience for those legitimately attempting to
+recover a lost password.
+
 ### Access User Profiles Permission
 
-If a user belongs to a role that has "access user profiles" permission granted
-to it, then that user can serially visit all integers at the URL
-http://drupal.org/user/UID and get the username from the loaded profile pages.
+If a user account belongs to a role that has "access user profiles" permission
+granted to it, then that account can serially visit all integers at the URL
+http://example.com/user/UID and may be redirected to a URL containing a valid
+username.
 
-Also With the "access user profiles "permission, the user can call the core
-callback at http://drupal.org/user/autocomplete/a and get the usernames.
+Also With the "access user profiles "permission, the account can call the core
+callback at http://example.com/user/autocomplete/a and get the usernames.
 Replacing the "a" with each letter of the alphabet, prints an array of
 usernames.
 
@@ -45,10 +49,10 @@ Reports » Status report).
 ### Other
 
 Note: There may be other places where usernames could be exposed that this
-module may not know about. Examples are the "submitted by" information on nodes
-or comments, views, exposed filters or by other contributed modules. Users
-looking to hide the usernames from comments and nodes should look at using
-realname or some other tool.
+module may not know about. Examples are the "submitted by" information on
+content or comments, in views, in exposed filters or by other contributed
+modules. People looking to hide the usernames from comments and content should
+considder using the realname module, or some other tool.
 
 
 Requirements
